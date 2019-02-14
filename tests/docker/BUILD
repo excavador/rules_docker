@@ -269,6 +269,25 @@ container_push(
     tags = ["manual"],
 )
 
+genrule(
+    name = "push_tag_file",
+    output_to_bindir = 1,
+    srcs = [],
+    outs = ["test.tag"],
+    cmd = """echo test > $@""",
+)
+
+container_push(
+    name = "push_test_tag_file",
+    format = "Docker",
+    image = ":set_cmd",
+    registry = "localhost:5000",
+    repository = "docker/test",
+    tag_file = ":test.tag",
+    tags = ["manual"],
+)
+
+
 container_push(
     name = "push_stamped_test",
     format = "Docker",
@@ -283,6 +302,12 @@ file_test(
     name = "test_push_digest_output",
     content = "sha256:515b5206d4232e54ac4a0c2b45fb9fbe678ccc4f6c228e59024ac3ef61e08133",
     file = ":push_test.digest",
+)
+
+file_test(
+    name = "test_push_tag_file_digest_output",
+    content = "sha256:515b5206d4232e54ac4a0c2b45fb9fbe678ccc4f6c228e59024ac3ef61e08133",
+    file = ":push_test_tag_file.digest",
 )
 
 file_test(
